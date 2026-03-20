@@ -89,8 +89,13 @@ export function EditorView({ image, onBack }: EditorViewProps) {
       const dlRenderer = new FilterRenderer(dlCanvas);
       dlRenderer.setImage(image.image);
       dlRenderer.render(selectedFilter);
-      const blob = await dlRenderer.toBlob(0.95);
-      downloadBlob(blob, `${image.name}_${selectedFilter.name}.jpg`);
+
+      // Preserve original format: PNG stays PNG (lossless), others use JPEG at max quality
+      const isPng = image.file.type === 'image/png';
+      const mimeType = isPng ? 'image/png' : 'image/jpeg';
+      const ext = isPng ? 'png' : 'jpg';
+      const blob = await dlRenderer.toBlob(mimeType, 1.0);
+      downloadBlob(blob, `${image.name}_${selectedFilter.name}.${ext}`);
       dlRenderer.destroy();
     } catch (e) {
       console.error('Download failed:', e);

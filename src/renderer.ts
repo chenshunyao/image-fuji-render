@@ -272,12 +272,12 @@ export class FilterRenderer {
     this.canvas.height = height;
   }
 
-  toBlob(quality = 0.92): Promise<Blob> {
+  toBlob(mimeType = 'image/jpeg', quality = 1.0): Promise<Blob> {
     return new Promise((resolve, reject) => {
       this.canvas.toBlob(
         (blob) => blob ? resolve(blob) : reject(new Error('Failed to create blob')),
-        'image/jpeg',
-        quality
+        mimeType,
+        mimeType === 'image/png' ? undefined : quality
       );
     });
   }
